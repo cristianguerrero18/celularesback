@@ -93,3 +93,32 @@ export const editarProducto = async (req, res) => {
     res.status(500).send('Error al editar el producto');
   }
 };
+
+export const nuevoProducto = async (req, res) => {
+  try {
+    const { nombre, marca, modelo, descripcion, precio_unitario, stock, imagen } = req.body;
+
+    // Validar campos obligatorios
+    if (!nombre || !marca || !modelo || precio_unitario === undefined || stock === undefined) {
+      return res.status(400).send('Faltan campos obligatorios');
+    }
+
+    const nuevoProducto = new Producto({
+      nombre,
+      marca,
+      modelo,
+      descripcion: descripcion || '',
+      precio_unitario,
+      stock,
+      imagen: imagen || '',
+      fecha_creacion: new Date()
+    });
+
+    const productoGuardado = await nuevoProducto.save();
+
+    res.status(201).json(productoGuardado);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error al crear el producto');
+  }
+};
